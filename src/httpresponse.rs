@@ -1,6 +1,4 @@
-use std::fmt::format;
-use std::result;
-use std::{collections::HashMap, hash::Hash};
+use std::{collections::HashMap };
 use std::io::{Write, Result};
 
 #[derive(Debug, PartialEq, Clone)]
@@ -40,7 +38,7 @@ impl<'a> HttpResponse<'a> {
             Some(_h) => headers,
             None => {
                 let mut h = HashMap::new();
-                h.insert("Content-Type", "text/html");
+                h.insert("Content-Type", "text/plain");
                 Some(h)
             }
         };

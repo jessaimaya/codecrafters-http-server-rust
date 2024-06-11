@@ -1,16 +1,19 @@
 pub mod httprequest;
 pub mod httpresponse;
+pub mod server;
+pub mod router;
 
-use std::io::Read;
-use std::{io::Write, net::TcpListener};
+use server::Server;
 
-use httprequest::{HttpRequest, Resource};
-use httpresponse::HttpResponse;
+
 
 fn main() {
     println!("Logs from your program will appear here!");
 
-    let listener = TcpListener::bind("127.0.0.1:4221").unwrap();
+    let server = Server::new("127.0.0.1:4221");
+    server.run();
+
+    /*let listener = TcpListener::bind("127.0.0.1:4221").unwrap();
 
     for stream in listener.incoming() {
         match stream {
@@ -39,4 +42,5 @@ fn main() {
             }
         }
     }
+    */
 }

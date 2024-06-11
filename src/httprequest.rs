@@ -52,7 +52,7 @@ pub struct HttpRequest {
 impl From<String> for HttpRequest {
     fn from(req: String) -> HttpRequest {
         let mut p_method = Method::Unitialized;
-        let mut p_resource = Resource::Path(("".to_string()));
+        let mut p_resource = Resource::Path("".to_string());
         let mut p_version = Version::Unitialized;
         let mut p_headers: HashMap<String, String> = HashMap::new();
         let mut p_body = "";
