@@ -1,17 +1,38 @@
-use std::borrow::BorrowMut;
+pub mod httprequest;
+pub mod httpresponse;
+
+use std::io::Read;
 use std::{io::Write, net::TcpListener};
+
+use httprequest::{HttpRequest, Resource};
+use httpresponse::HttpResponse;
 
 fn main() {
     println!("Logs from your program will appear here!");
 
     let listener = TcpListener::bind("127.0.0.1:4221").unwrap();
 
-    for stream in listener.incoming().borrow_mut() {
+    for stream in listener.incoming() {
         match stream {
             Ok(mut stream) => {
-                println!("accepted new connection");
-                let buf = "HTTP/1.1 200 OK\r\n\r\n";
-                let _ = stream.write(buf.as_bytes());
+                let mut incomming_buffer = [0; 1024];
+                println!("accepted new connection: {}", std::str::from_utf8(&incomming_buffer).unwrap());
+
+                let _ = stream.read(&mut incomming_buffer).unwrap();
+                let request_str = std::str::from_utf8(&incomming_buffer).unwrap();
+                let req: HttpRequest = String::from(request_str).into();
+                let mut res = HttpResponse::default();
+
+                if req.resource == Resource::Path("/".into()) {
+                    res = HttpResponse::new("200", None, None);
+                } else {
+                    res = HttpResponse::new("404", None, None);
+                }
+
+                let _ = res.send_response(&mut stream);
+
+                // let buf = "HTTP/1.1 200 OK\r\n\r\n";
+                // let _ = stream.write(outcomming_buf.as_bytes());
             }
             Err(e) => {
                 println!("error: {}", e);
