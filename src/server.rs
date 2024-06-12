@@ -1,5 +1,6 @@
 use std::io::Read;
 use std::net::TcpListener;
+use std::thread;
 
 use crate::httprequest::HttpRequest;
 use crate::router::Router;
@@ -21,15 +22,17 @@ impl<'a> Server<'a> {
 
         for stream in listener.incoming() {
             let mut stream = stream.unwrap();
-            let mut read_buffer = [0;1024];
+            thread::spawn(move || {
+                let mut read_buffer = [0;1024];
 
-            stream.read(&mut read_buffer).unwrap();
+                stream.read(&mut read_buffer).unwrap();
 
-            let req: HttpRequest = String::from_utf8(
-                read_buffer.to_vec()
-            ).unwrap().into();
+                let req: HttpRequest = String::from_utf8(
+                    read_buffer.to_vec()
+                ).unwrap().into();
 
-            Router::route(req, &mut stream);
+                Router::route(req, &mut stream);
+            });
         }
     }
 }
