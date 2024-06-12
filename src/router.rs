@@ -14,7 +14,14 @@ impl Router {
                         "" | "/" => {
                             let resp: HttpResponse = HttpResponse::new("200", None, None);
                             let _ = resp.send_response(stream);
-                        }
+                        },
+                        "user-agent" => {
+                            let mut resp: HttpResponse = HttpResponse::new("200", None, None);
+                            if let Some(header) = req.headers.get("User-Agent") {
+                                resp.body = Some(header.trim().to_string());
+                            }
+                            let _ = resp.send_response(stream);
+                        },
                         "echo" => {
                             let resp: HttpResponse = HttpResponse::new(
                                 "200",
