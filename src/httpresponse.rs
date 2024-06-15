@@ -45,6 +45,7 @@ impl<'a> HttpResponse<'a> {
 
         response.status_text = match response.status_code {
             "200" => "OK".into(),
+            "201" => "Created".into(),
             "400" => "Bad Request".into(),
             "404" => "Not Found".into(),
             "500" => "Internal Server Error".into(),

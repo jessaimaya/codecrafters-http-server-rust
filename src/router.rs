@@ -59,7 +59,29 @@ impl Router {
                     }
                 }
             },
-            _ => { // POST, PUT, etc.
+            httprequest::Method::Post => match &req.resource {
+                httprequest::Resource::Path(s) => {
+                let route: Vec<&str> = s.split("/").collect();
+                match route[1] {
+                    "files" => {
+                        let filename = route[2];
+                        let args: Vec<String> = env::args().collect();
+                        let dir = args.last().unwrap().to_string();
+                        let data = req.body;
+
+                        let mut file = std::fs::File::create(&format!("{}{}", dir, filename)).unwrap();
+                        let _ = file.write_all(data.trim_end_matches('\0').as_bytes());
+                        let resp = HttpResponse::new("201", None, None);
+                        let _ = resp.send_response(stream);
+                    },
+                    _ => {
+                        let resp = HttpResponse::new("404", None, None);
+                        let _ = resp.send_response(stream);
+                    }
+                }
+            }
+            },
+            _ => { // PUT, etc.
                 let resp = HttpResponse::new("404", None, None);
                 let _ = resp.send_response(stream);
             }
