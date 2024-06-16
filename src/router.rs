@@ -44,11 +44,20 @@ impl Router {
                             }
                         },
                         "echo" => {
-                            let resp: HttpResponse = HttpResponse::new(
+                            let req_headers = req.headers.clone();
+                            let accept_encoding = req_headers.get("Accept-Encoding"); 
+                            let mut resp: HttpResponse = HttpResponse::new(
                                 "200",
                                 None,
                                 Some(route[2].to_string()),
                             );
+                            if accept_encoding.is_some() {
+                                if accept_encoding.unwrap().to_lowercase() == "gzip" {
+                                    resp.headers = Some(HashMap::from([
+                                        ("Content-Encoding", accept_encoding.unwrap() as &str)
+                                    ]));
+                                }
+                            }
                             let _ = resp.send_response(stream);
 
                         },
