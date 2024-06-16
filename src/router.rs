@@ -52,9 +52,10 @@ impl Router {
                                 Some(route[2].to_string()),
                             );
                             if accept_encoding.is_some() {
-                                if accept_encoding.unwrap().to_lowercase().trim() == "gzip" {
+                                let mut encodings = accept_encoding.unwrap().split(",");
+                                if let Some(h) = encodings.find(|e| e.to_lowercase().trim() == "gzip") {
                                     resp.headers = Some(HashMap::from([
-                                        ("Content-Encoding", accept_encoding.unwrap() as &str)
+                                        ("Content-Encoding", h as &str)
                                     ]));
                                 }
                             }
