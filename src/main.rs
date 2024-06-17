@@ -1,11 +1,9 @@
 pub mod httprequest;
 pub mod httpresponse;
-pub mod server;
 pub mod router;
+pub mod server;
 
 use server::Server;
-
-
 
 fn main() {
     println!("Logs from your program will appear here!");

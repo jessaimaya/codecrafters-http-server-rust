@@ -11,9 +11,7 @@ pub struct Server<'a> {
 
 impl<'a> Server<'a> {
     pub fn new(s: &'a str) -> Self {
-        Server {
-            socket: s,
-        }
+        Server { socket: s }
     }
 
     pub fn run(&self) {
@@ -23,13 +21,11 @@ impl<'a> Server<'a> {
         for stream in listener.incoming() {
             let mut stream = stream.unwrap();
             thread::spawn(move || {
-                let mut read_buffer = [0;1024];
+                let mut read_buffer = [0; 1024];
 
                 stream.read(&mut read_buffer).unwrap();
 
-                let req: HttpRequest = String::from_utf8(
-                    read_buffer.to_vec()
-                ).unwrap().into();
+                let req: HttpRequest = String::from_utf8(read_buffer.to_vec()).unwrap().into();
 
                 Router::route(req, &mut stream);
             });
